@@ -45,11 +45,11 @@ def _construct_indeces(index, size):
 
 
 def _identity_matrix(size):
-    diag = [1 for i in range(size)]
-    return numpy.diag(diag, 0)
+    diagonals = [1 for i in range(size)]
+    return numpy.diag(diagonals, 0)
 
 
-def hamiltionian(size, quality, potential):
+def hamiltonian(size, quality, potential):
     """
     :param size: Size of square matrix
     :param quality: Quality; higher q => higher resolution: n * dq = 1/q
@@ -62,13 +62,15 @@ def hamiltionian(size, quality, potential):
     for i in range(0, size):
         minus, plus = _construct_indeces(i, size)
         _matrix[i, minus] = (-1/(dn * dn))
-        _matrix[i, i] = (2 / (dn * dn)) + potential((i + 1) * dn)
+        _matrix[i, i] = (2 / (dn * dn)) + potential(i * dn)
         _matrix[i, plus] = (-1/(dn * dn))
 
     return _matrix
 
 
-def construct_time_evolve_hamiltonian(hamiltonian, time_step=float(1/40)):
+def construct_time_evolve_hamiltonian(
+        hamiltonian, time_step=(float(1)/float(40000))
+):
     """
     H is the time-evolution hamiltonian,
         H = [(1 + (dh/dt)i)^-1].[(1 - (dh/dt)i)^-1].
@@ -78,9 +80,7 @@ def construct_time_evolve_hamiltonian(hamiltonian, time_step=float(1/40)):
         linalg.inv(
             _identity_matrix(size) + 1j*(time_step * hamiltonian)
         ),
-        linalg.inv(
-            _identity_matrix(size) - 1j*(time_step * hamiltonian)
-        )
+        _identity_matrix(size) - 1j*(time_step * hamiltonian)
     )
 
 
