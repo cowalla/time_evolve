@@ -1,6 +1,7 @@
 ### What is this??
 
-This package will time evolve the Schrödinger equation.
+NOTE: This package doesn't work yet! Still in development.
+This package will (one day) time-evolve the Schrödinger equation.
 
 
 ### Using the project
@@ -10,4 +11,4 @@ You must have 'pip' and virtualenv to use this lil package
 ** '. bin/activate'
 ** 'pip install -r requirements.txt'
 * wait for packages to install
-* Run the script and make your butterfly: 'python script.py'
+* Run the script: 'python script.py'
