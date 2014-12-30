@@ -1,5 +1,5 @@
 import numpy
-from numpy import exp, zeros, power, linalg
+from numpy import exp, zeros, power, linalg, dot
 
 
 def create_gaussian(kwargs):
@@ -22,6 +22,19 @@ def create_gaussian(kwargs):
     )
 
 
+def discretize_continuous_function(f, size):
+    """
+    :param f: function in question to be discretized over [0, 1]
+    :param size: number of points in [0, 1]
+    :return: [f(0), f(ds), ... , f(size - ds), f(size)]
+    """
+    ds = 1.0 / float(size)
+    return [
+        f(i * ds) for i in range(size)
+    ]
+
+
+
 def _construct_indeces(index, size):
     if index == 0:
         return size - 1, 1
@@ -32,7 +45,7 @@ def _construct_indeces(index, size):
 
 
 def _identity_matrix(size):
-    diag = [1 for i in size]
+    diag = [1 for i in range(size)]
     return numpy.diag(diag, 0)
 
 
@@ -43,7 +56,7 @@ def hamiltionian(size, quality, potential):
     :param potential: Continuous potential function
     :return: Numpy Hamiltonian matrix.
     """
-    dn = float(1/(size * quality))
+    dn = float(1/(float(size) * float(quality)))
     _matrix = zeros(shape=(size, size))
 
     for i in range(0, size):
@@ -57,12 +70,12 @@ def hamiltionian(size, quality, potential):
 
 def construct_time_evolve_hamiltonian(hamiltonian, time_step=float(1/4000)):
     size = len(hamiltonian)
-    return linalg.dot(
+    return dot(
         linalg.inv(
-            _identity_matrix(size) + complex(0, time_step * hamiltonian)
+            _identity_matrix(size) + 1j*(time_step * hamiltonian)
         ),
         linalg.inv(
-            _identity_matrix(size) - complex(0, time_step * hamiltonian)
+            _identity_matrix(size) - 1j*(time_step * hamiltonian)
         )
     )
 
@@ -73,7 +86,7 @@ def time_evolve(time_hamiltonian, discrete_gaussian):
     :param discrete_gaussian: discrete gaussian with same size as Hamiltonian
     :return: the discrete gaussian time-evolved one step
     """
-    return linalg.dot(time_hamiltonian, discrete_gaussian)
+    return dot(time_hamiltonian, discrete_gaussian)
 
 
 
