@@ -55,25 +55,25 @@ def hamiltionian(size, quality, potential):
     return _matrix
 
 
-def time_evolve(hamiltonian, discrete_gaussian, time_precision=float(1/4000)):
-    """
-    :param hamiltonian: Hamiltonian influencing gaussian
-    :param discrete_gaussian: discrete gaussian with same size as Hamiltonian
-    :param time_precision: size of time step
-    :return: the discrete gaussian time-evolved by step of size `time_precision`
-    """
-    H = (
-        linalg.dot(
-            linalg.inv(
-                _identity_matrix(size) + complex(0, time_precision * hamiltonian)
-            ),
-            linalg.inv(
-                _identity_matrix(size) - complex(0, time_precision * hamiltonian)
-            )
+def construct_time_evolve_hamiltonian(hamiltonian, time_step=float(1/4000)):
+    size = len(hamiltonian)
+    return linalg.dot(
+        linalg.inv(
+            _identity_matrix(size) + complex(0, time_step * hamiltonian)
+        ),
+        linalg.inv(
+            _identity_matrix(size) - complex(0, time_step * hamiltonian)
         )
     )
 
-    return linalg.dot(H, discrete_gaussian)
+
+def time_evolve(time_hamiltonian, discrete_gaussian):
+    """
+    :param time_hamiltonian: Hamiltonian influencing gaussian
+    :param discrete_gaussian: discrete gaussian with same size as Hamiltonian
+    :return: the discrete gaussian time-evolved one step
+    """
+    return linalg.dot(time_hamiltonian, discrete_gaussian)
 
 
 

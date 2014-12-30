@@ -1,3 +1,20 @@
-from time_evolve.math import create_gaussian
-b = {'a': 1, 'b': 1, 'c': 1, 're_offset': 1, 'im_offset': 1}
-create_gaussian(b)
+from time_evolve.math import (
+    create_gaussian,
+    hamiltionian,
+    construct_time_evolve_hamiltonian,
+    time_evolve,
+)
+
+SIZE = 200
+TIME_STEPS = 100
+PARAMS = {'a': 2.5, 'b': -275, 'c': 65, 're_offset': -0.1, 'im_offset': -0.1}
+POTENTIAL = lambda x: 0
+
+initial_gaussian = create_gaussian(PARAMS)
+initial_hamiltonian = hamiltionian(size=SIZE, quality=1, potential=POTENTIAL)
+evolve_hamiltonian = construct_time_evolve_hamiltonian(initial_hamiltonian)
+gaussians = [initial_gaussian]
+
+for time in range(TIME_STEPS):
+    tm1_gaussian = gaussians[-1]
+    gaussians.append(time_evolve(evolve_hamiltonian, tm1_gaussian))
