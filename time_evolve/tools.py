@@ -69,6 +69,10 @@ def hamiltionian(size, quality, potential):
 
 
 def construct_time_evolve_hamiltonian(hamiltonian, time_step=float(1/40)):
+    """
+    H is the time-evolution hamiltonian,
+        H = [(1 + (dh/dt)i)^-1].[(1 - (dh/dt)i)^-1].
+    """
     size = len(hamiltonian)
     return dot(
         linalg.inv(
@@ -82,6 +86,9 @@ def construct_time_evolve_hamiltonian(hamiltonian, time_step=float(1/40)):
 
 def time_evolve(time_hamiltonian, discrete_gaussian):
     """
+    We want to evolve a wave form under influence of a Hamiltonian `h` using the
+    Crank-Nicholson eq., such that,
+        Psi(t+dt) = H . Psi(t).
     :param time_hamiltonian: Hamiltonian influencing gaussian
     :param discrete_gaussian: discrete gaussian with same size as Hamiltonian
     :return: the discrete gaussian time-evolved one step
