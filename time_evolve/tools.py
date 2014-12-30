@@ -68,7 +68,7 @@ def hamiltionian(size, quality, potential):
     return _matrix
 
 
-def construct_time_evolve_hamiltonian(hamiltonian, time_step=float(1/4000)):
+def construct_time_evolve_hamiltonian(hamiltonian, time_step=float(1/40)):
     size = len(hamiltonian)
     return dot(
         linalg.inv(
