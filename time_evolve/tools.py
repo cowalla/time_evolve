@@ -10,9 +10,9 @@ def create_gaussian(kwargs):
     Requires parameter dictionary with `a`, `b`, `c`, `re_offset`, `im_offset`.
     """
     a, b, c, re_offset, im_offset = (
-        kwargs['a'],
-        kwargs['b'],
-        kwargs['c'],
+        kwargs['leading_constant'],
+        kwargs['real_proportion'],
+        kwargs['complex_proportion'],
         kwargs['re_offset'],
         kwargs['im_offset'],
     )
@@ -32,7 +32,6 @@ def discretize_continuous_function(f, size):
     return [
         f(i * ds) for i in range(size)
     ]
-
 
 
 def _construct_indeces(index, size):
@@ -69,18 +68,18 @@ def hamiltonian(size, quality, potential):
 
 
 def construct_time_evolve_hamiltonian(
-        hamiltonian, time_step=(float(1)/float(40000))
+        init_hamiltonian, time_step=(float(1)/float(40000))
 ):
     """
     H is the time-evolution hamiltonian,
-        H = [(1 + (dh/dt)i)^-1].[(1 - (dh/dt)i)^-1].
+        H = [1 + i dt H]^-1.[1 - i dt H].
     """
-    size = len(hamiltonian)
+    size = len(init_hamiltonian)
     return dot(
         linalg.inv(
-            _identity_matrix(size) + 1j*(time_step * hamiltonian)
+            _identity_matrix(size) + 1j*(time_step * init_hamiltonian)
         ),
-        _identity_matrix(size) - 1j*(time_step * hamiltonian)
+        _identity_matrix(size) - 1j*(time_step * init_hamiltonian)
     )
 
 
@@ -94,6 +93,21 @@ def time_evolve(time_hamiltonian, discrete_gaussian):
     :return: the discrete gaussian time-evolved one step
     """
     return dot(time_hamiltonian, discrete_gaussian)
+
+
+def normalize_gaussian(gaussian):
+    inverse_norm = (1.0 / numpy.linalg.norm(gaussian))
+    normalized_gaussian = []
+    for component in gaussian:
+        normalized_gaussian.append(
+            inverse_norm * power(
+                dot(component, numpy.conjugate(component)), 0.5
+            )
+        )
+
+    return numpy.real(normalized_gaussian)
+
+
 
 
 
