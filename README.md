@@ -1,7 +1,6 @@
 ### What is this??
 
-NOTE: This package doesn't work yet! Still in development.
-This package will (one day) time-evolve the Schrödinger equation.
+This package will time-evolve the Schrödinger equation.
 
 
 ### Using the project
