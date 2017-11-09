@@ -15,31 +15,34 @@ X_STEPS = 100
 TIME_STEPS = 300
 X_SIZE = 1
 X_POSITIONS = [X_SIZE * float(i)/float(X_STEPS) for i in range(1, X_STEPS + 1)]
-# a exp( b(re_offset + x)^2 + c(im_offset + x)i ).
-PARAMS = {
-    'leading_constant': 1.0,
-    'real_proportion': -2000.0,
-    'complex_proportion': -3000.0,
-    're_offset': -0.3,
-    'im_offset': -0.3,
-}
+
+LEADING_CONSTANT = 1.0
+REAL_CONSTANT = -2000.0
+COMPLEX_CONSTANT = -3000.0
+RE_OFFSET = -0.3
+IM_OFFSET = -0.3
+
+POTENTIAL_LOCATION = 0.6
 POTENTIAL_STRENGTH = 30000
 
+gaussian_fn = create_gaussian(
+    a=LEADING_CONSTANT,
+    b=REAL_CONSTANT,
+    c=COMPLEX_CONSTANT,
+    re_offset=RE_OFFSET,
+    im_offset=IM_OFFSET
+)
 
-def potential(x):
-    if x < 0.6:
+def wall_potential(x):
+    if x < POTENTIAL_LOCATION:
         return 0
-    elif x < 0.61:
+    elif x < POTENTIAL_LOCATION + 0.01:
         return POTENTIAL_STRENGTH
     else:
         return 0
 
-initial_gaussian = discretize_continuous_function(
-    create_gaussian(PARAMS), X_STEPS
-)
-initial_hamiltonian = hamiltonian(
-    size=X_STEPS, quality=1.0, potential=potential
-)
+initial_gaussian = discretize_continuous_function(gaussian_fn, X_STEPS)
+initial_hamiltonian = hamiltonian(size=X_STEPS, quality=1.0, potential=wall_potential)
 evolve_hamiltonian = construct_time_evolve_hamiltonian(initial_hamiltonian)
 gaussians = [initial_gaussian]
 
@@ -47,14 +50,19 @@ for time in range(TIME_STEPS):
     gaussians.append(time_evolve(evolve_hamiltonian, gaussians[-1]))
 
 display_gaussians = []
+
 for time in range(TIME_STEPS):
-    display_gaussians.append(norm(gaussians[time]))
+    normalized_gaussian = norm(gaussians[time])
+    display_gaussians.append(normalized_gaussian)
 
 
 def update_line(num, data, line):
     if num < TIME_STEPS:
         line.set_data(X_POSITIONS, numpy.real(data[num]))
+
     return line
+
+# make figure
 
 fig1 = plt.figure()
 
