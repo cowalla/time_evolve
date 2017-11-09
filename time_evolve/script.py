@@ -55,6 +55,7 @@ for time in range(TIME_STEPS):
     normalized_gaussian = norm(gaussians[time])
     display_gaussians.append(normalized_gaussian)
 
+# make figure
 
 def update_line(num, data, line):
     if num < TIME_STEPS:
@@ -62,10 +63,7 @@ def update_line(num, data, line):
 
     return line
 
-# make figure
-
 fig1 = plt.figure()
-
 l = plt.plot([], [], 'r-')[0]
 plt.xlim(0, X_SIZE)
 plt.ylim(-5, 5)
@@ -73,7 +71,13 @@ plt.xlabel('x')
 plt.title('y')
 
 line_ani = animation.FuncAnimation(
-    fig1, update_line, fargs=(display_gaussians, l), interval=1, blit=False
+    fig1, update_line, fargs=(display_gaussians, l), interval=10, blit=False
 )
 
-plt.show()
+# TODO: Fix closing the animation
+try:
+    plt.show()
+except KeyboardInterrupt:
+    print 'closing!'
+    plt.close()
+    pass
