@@ -9,11 +9,13 @@ def _construct_indices(index, size):
 
     return index - 1, index + 1
 
+
 def _identity_matrix(size):
     """
     Matrix with 1s along the diagonal and 0s everywhere else.
     """
     return diagonal_matrix([1 for i in range(size)], 0)
+
 
 def create_gaussian(a, b, c, re_offset, im_offset):
     """
